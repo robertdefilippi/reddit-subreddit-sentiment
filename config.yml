@@ -1,0 +1,7 @@
+postgresql:
+    host: ec2-54-235-86-101.compute-1.amazonaws.com
+    part: 5432
+    database: d3iptr1hdtkr2l
+    username: noxcssdukolhwd
+    password: 75a4253e816405d109d2a2b3eefd28c1f43ab9d82ec95fdb36fca6b262a6a02e
+    
