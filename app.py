@@ -16,6 +16,8 @@ from os import makedirs
 import get_reddit_data
 import pg_manager
 
+# Global variables
+
 MAX_ROWS = 9000
 
 # Start app and get credentials
@@ -130,7 +132,7 @@ def homepage():
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     app.logger.info(f'Forcing Shutdown: {request.json}')
-    # atexit.register(lambda: scheduler.shutdown())
+    atexit.register(lambda: scheduler.shutdown())
     shutdown_server()
     shutdown_message = 'Server shutting down...'
     
@@ -143,4 +145,4 @@ if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     # app.run(debug=True, host="localhost", port=8888)
-    app.run(threaded=True)
+    app.run(threaded=True, host="localhost", port=8888)

@@ -255,7 +255,7 @@ class DBConnect:
     def get_card_counts(self, subreddit_name:str):
         data_results = []
 
-        # Posts last hour
+        # New posts
         query_string = f"""    
         SELECT
             COUNT(*) AS cnt
@@ -263,11 +263,10 @@ class DBConnect:
         FROM sentiment
 
         WHERE 
-            post_ts between date_trunc('hour', timezone('America/New_York', current_timestamp)) and date_trunc('hour', timezone('America/New_York', current_timestamp + interval '1 hour'))
-            AND subreddit = ('{subreddit_name}')
+            subreddit = ('{subreddit_name}')
+            AND post_ts = (SELECT MAX(post_ts) FROM sentiment)
         """
 
-        
         cur = self._conn.cursor()
         cur.execute(query_string)
         result_set = cur.fetchall()
