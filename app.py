@@ -158,6 +158,22 @@ def submit_login():
         flash('Invalid email/password!')
         return redirect('/login')
 
+@app.route('/register_user', methods=['POST'])
+def register_user():
+    app.logger.info("Regisration submission: ", request.form)
+    _email = request.form['email-register']
+    _password = request.form['password-register']
+    _password_hash = generate_password_hash(_password)
+    session['email'] = _email
+
+    print(_password_hash)
+    print(session)
+
+    # db.create_new_user(_email, _password_hash)
+
+    render_template('login.html')
+
+
 @app.route('/logout')
 def logout():
 	if 'email' in session:
@@ -217,11 +233,12 @@ def shutdown():
     
     return shutdown_message
 
-############################
+########################################################
 
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    # app.run(debug=True, host="localhost", port=8888)
-    app.run(threaded=True, host="localhost", port=8888)
+    app.secret_key = os.urandom(12)
+    app.run(debug=True, host="localhost", port=8888)
+    # app.run(threaded=True, host="localhost", port=8888)

@@ -5,6 +5,7 @@ import psycopg2
 import datetime
 import yaml
 
+
 class DBConnect:
 
     _instance = None
@@ -28,9 +29,9 @@ class DBConnect:
     def get_credentials(self):
         if os.path.exists(self._path):
             with open(self._path, 'r') as config_file:
-                yaml_loader = yaml.load(config_file, Loader=yaml.BaseLoader)    
+                yaml_loader = yaml.load(config_file, Loader=yaml.BaseLoader)
             self._config = yaml_loader['postgresql']
-        
+
         else:
             print(f"The path {self._path} does not exist.")
 
@@ -45,12 +46,12 @@ class DBConnect:
         try:
             if(self._conn is None):
                 self._conn = psycopg2.connect(dbname=self._dbname,
-                                            user=self._username, password=self._password,
-                                            host=self._host, port=self._port, sslmode='require')
+                                              user=self._username, password=self._password,
+                                              host=self._host, port=self._port, sslmode='require')
         except psycopg2.DatabaseError as e:
             print(f"Error: {e}")
             sys.exit()
-        
+
         finally:
             print('Connection opened successfully.')
 
@@ -90,12 +91,13 @@ class DBConnect:
                      score_positive,
                      score_compound))
         self._conn.commit()
-        
+
     def write_bulk(self, data):
         cur = self._conn.cursor()
-        args_str = ','.join(cur.mogrify("(%s,%s,%s,%s,%s,%s,%s)", row).decode('utf-8') for row in data)
+        args_str = ','.join(cur.mogrify(
+            "(%s,%s,%s,%s,%s,%s,%s)", row).decode('utf-8') for row in data)
         sql = f"INSERT INTO sentiment (post_ts, subreddit, post_title, score_negative, score_neutral, score_positive, score_compound) VALUES {args_str}"
-        cur.execute(sql)  
+        cur.execute(sql)
         self._conn.commit()
 
     def did_write_this_hour(self):
@@ -118,7 +120,7 @@ class DBConnect:
 
         if is_same_hour and is_same_day:
             value_to_return = True
-        else: 
+        else:
             value_to_return = False
 
         return value_to_return
@@ -147,8 +149,7 @@ class DBConnect:
         self._conn.commit()
         cur.close()
 
-    
-    def get_histogram_data(self, subreddit_name:str):
+    def get_histogram_data(self, subreddit_name: str):
 
         data_values = []
         data_labels = []
@@ -178,11 +179,11 @@ class DBConnect:
 
             FROM generate_series(-10, 10) series
             LEFT JOIN cte_scores ON cte_scores.buckets = series"""
-        
+
         cur = self._conn.cursor()
         cur.execute(query_string)
         result_set = cur.fetchall()
-        
+
         for row in result_set:
             data_labels.append(row[0])
             data_values.append(row[1])
@@ -208,17 +209,17 @@ class DBConnect:
             ORDER BY
                 subreddit
             """
-        
+
         cur = self._conn.cursor()
         cur.execute(query_string)
         result_set = cur.fetchall()
-        
+
         for row in result_set:
             data_labels.append(row[0])
 
         return data_labels
 
-    def get_random_rows(self, subreddit_name:str):
+    def get_random_rows(self, subreddit_name: str):
 
         data_labels = []
 
@@ -242,17 +243,18 @@ class DBConnect:
             
             LIMIT 3;
             """
-        
+
         cur = self._conn.cursor()
         cur.execute(query_string)
         result_set = cur.fetchall()
-        
+
         for row in result_set:
-            data_labels.append([row[0], row[1], row[2], row[3], row[4], row[5]])
+            data_labels.append(
+                [row[0], row[1], row[2], row[3], row[4], row[5]])
 
         return data_labels
 
-    def get_card_counts(self, subreddit_name:str):
+    def get_card_counts(self, subreddit_name: str):
         data_results = []
 
         # New posts
@@ -319,8 +321,7 @@ class DBConnect:
 
         return data_results
 
-
-    def get_histogram_counts(self, subreddit_name:str = 'all'):
+    def get_histogram_counts(self, subreddit_name: str = 'all'):
         data_results = []
 
         # Posts last hour
@@ -340,7 +341,7 @@ class DBConnect:
                 FROM sentiment
                 WHERE subreddit = ('{subreddit_name}') ) AS count_subquery;
         """
-        
+
         cur = self._conn.cursor()
         cur.execute(query_string)
         result_set = cur.fetchall()
@@ -350,7 +351,7 @@ class DBConnect:
         return data_results
 
     def get_total_records(self):
-        
+
         query_string = f"""    
         SELECT
             COUNT(*) AS cnt
@@ -389,8 +390,29 @@ class DBConnect:
         self._conn.commit()
         cur.close()
 
-    def get_user_password_hash(self, user_name):
+    def create_new_user(self, user_name, password):
         
+        query_string = f"""    
+            INSERT INTO  sentiment_users (user_name, password)
+            
+            SELECT ('{user_name}'), ('{password}') 
+            
+            WHERE NOT EXISTS (  SELECT  
+                                    1 
+                                FROM 
+                                    sentiment_users 
+                                WHERE 
+                                    user_name = ('{user_name}')
+                            )
+        """
+
+        cur = self._conn.cursor()
+        cur.execute(query_string)
+        self._conn.commit()
+        cur.close()
+
+    def get_user_password_hash(self, user_name):
+
         query_string = f"""    
         SELECT
             password

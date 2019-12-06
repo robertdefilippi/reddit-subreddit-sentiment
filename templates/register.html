@@ -28,32 +28,37 @@
             <div class="card-header">Register an Account</div>
 
             <div class="card-body">
-                <form>
+                
+                <!-- Start Form -->
+                <form action="{{ url_for('register_user') }}" method="post">
                     <div class="form-group">
                         <div class="form-row">
+                
                             <!-- Email -->
                             <div class="col-md-6">
                                 <div class="form-label-group">
-                                    <input type="email" id="email-register" class="form-control" placeholder="Email"
+                                    <input type="email" id="email-register" name="email-register" class="form-control" placeholder="Email"
                                         required="required" autofocus="autofocus"
-                                        pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}">
+                                        pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}"
+                                        data-error="Must be a valid email.">
                                     <label for="email-register">Email</label>
                                 </div>
                             </div>
+                
                             <!-- Password -->
                             <div class="col-md-6">
                                 <div class="form-label-group">
-                                    <input type="password" id="password-register" class="form-control"
+                                    <input type="password" id="password-register" name="password-register" class="form-control"
                                         placeholder="Password" required="required"
                                         pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                                        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                                        data-error="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                                         required>
                                     <label for="password-register">Password</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <input type="submit" value="Register" class="btn btn-primary btn-block" href="{{ url_for('homepage') }}">
+                    <input type="submit" id='submit-register' name='submit-register' class="btn btn-primary btn-block" href="{{ url_for('homepage') }}">
                 </form>
             </div>
         </div>
