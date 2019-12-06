@@ -388,3 +388,21 @@ class DBConnect:
         cur.execute(query_string)
         self._conn.commit()
         cur.close()
+
+    def get_user_password_hash(self, user_name):
+        
+        query_string = f"""    
+        SELECT
+            password
+
+        FROM sentiment_users
+
+        WHERE
+            user_name = ('{user_name}')
+        """
+
+        cur = self._conn.cursor()
+        cur.execute(query_string)
+        result_set = cur.fetchall()
+
+        return result_set[0][0]

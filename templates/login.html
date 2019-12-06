@@ -9,60 +9,75 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Reddit Sentiment - Login</title>
+  <title>Login</title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-  type="text/css">
-<link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    type="text/css">
+  <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sb-admin.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sb-admin.css') }}">
 
 </head>
 
 <body class="bg-dark">
 
   <div class="container">
-    <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Login</div>
+    <div class="card card-register mx-auto mt-5">
+      <div class="card-header">Login: Reddit Sentiment App</div>
+
       <div class="card-body">
         <form>
           <div class="form-group">
-            <div class="form-label-group">
-              <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required" autofocus="autofocus">
-              <label for="inputEmail">Email address</label>
+            <div class="form-row">
+              
+              <!-- Email -->
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="email" id="email-login" class="form-control" placeholder="Email" required="required"
+                    autofocus="autofocus" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}">
+                  <label for="email-login">Email</label>
+                </div>
+              </div>
+              
+              <!-- Password -->
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="password" id="password-login" class="form-control" placeholder="Password"
+                    required="required" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                    required>
+                  <label for="password-login">Password</label>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="form-group">
-            <div class="form-label-group">
-              <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="required">
-              <label for="inputPassword">Password</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" value="remember-me">
-                Remember Password
-              </label>
-            </div>
-          </div>
-          <a class="btn btn-primary btn-block" href="index.html">Login</a>
+          <input type="submit" value="Login" class="btn btn-primary btn-block" href="{{ url_for('homepage') }}">
         </form>
+
         <div class="text-center">
-          <a class="d-block small mt-3" href="register.html">Register an Account</a>
+          <a class="d-block small mt-3" href="{{ url_for('register') }}">Not Registered?</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Javascript -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 
-  <!-- Core plugin JavaScript-->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Page level plugin JavaScript-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
 
 </body>
 

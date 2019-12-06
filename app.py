@@ -4,10 +4,12 @@ import json
 import atexit
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import psycopg2
 
-from flask import Flask, render_template, request, jsonify, url_for, redirect
+from flask import Flask, render_template, request, jsonify, url_for, redirect, session, make_response, flash
+
 import logging
 
 from os.path import exists
@@ -19,6 +21,7 @@ import pg_manager
 # Global variables
 
 MAX_ROWS = 9000
+COOKIE_TIME_OUT = 60*5
 
 # Start app and get credentials
 
@@ -64,14 +67,16 @@ def get_data_values(subreddit_name):
 @app.before_first_request
 def init_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=check_did_write, trigger="interval", minutes=30)
+    scheduler.add_job(func=check_did_write, trigger="interval", minutes=30, misfire_grace_time=10)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
 init_scheduler()
 
+###############
 # App functions
+###############
 
 @app.route('/get_data')
 def get_data():
@@ -112,25 +117,96 @@ def update_hist():
     return jsonify({'payload':json.dumps({'histogram_counts':histogram_counts})})
 
 
+# generate_password_hash('password')
+
+# check_password_hash('password_hash', 'password')
+
+@app.route('/submit_login', methods=['POST'])
+def submit_login():	
+    _email = request.form['input-email']
+    _password = request.form['input-password']
+
+    if 'email' in request.cookies:
+        username = request.cookies.get('email')
+        password = request.cookies.get('pwd')
+
+        password_hash = db.get_user_password_hash(username)
+        
+        if password_hash and check_password_hash(password_hash, password):
+            session['email'] = username
+            return redirect('/dashboard')
+        else:
+            return redirect('/login')
+            
+    elif _email and _password:
+		#check user exists			
+        password_hash = db.get_user_password_hash(_email)
+        if password_hash:
+            if check_password_hash(password_hash, _password):
+                session['email'] = _email
+                resp = make_response(redirect('/dashboard'))
+                resp.set_cookie('email', _email, max_age=COOKIE_TIME_OUT)
+                resp.set_cookie('pwd', _password, max_age=COOKIE_TIME_OUT)
+                return resp
+            else:
+                flash('Invalid password!')
+                return redirect('/login')
+        else:
+            flash('Invalid email/password!')
+            return redirect('/login')
+    else:
+        flash('Invalid email/password!')
+        return redirect('/login')
+
+@app.route('/logout')
+def logout():
+	if 'email' in session:
+		session.pop('email', None)
+	return redirect('login')
+
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
+###############
 # Routes
+###############
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
+def login_auth():
+    
+    app.logger.info('Checking for login cookie ...')   
+    user_id = request.cookies.get('reddit_sentiment_cookie')
+    app.logger.info(f'Login cookie for current user: {user_id}')
+    
+    user = db.get_user_password_hash(user_id) if user_id else None
+    
+    if user_id and user:
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("login.html")
+    if 'email' in session:
+        return redirect(url_for(''))
+    return render_template('login.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if 'email' in session:
+        return redirect(url_for(''))
+    return render_template('register.html')
+    
 @app.route('/dashboard')
 def homepage():
     return render_template("dashboard.html")
 
 @app.errorhandler(404)
 def not_found(error):
-    return render_template("404.html"), 404
+    return render_template("404.html"), 404		
 
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
