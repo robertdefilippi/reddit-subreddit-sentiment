@@ -118,16 +118,19 @@ def shutdown_server():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
-# Templates
+# Routes
 
-# TODO: Update login screen
-@app.route('/login')
+@app.route('/')
 def login():
     return render_template("login.html")
 
-@app.route('/')
+@app.route('/dashboard')
 def homepage():
     return render_template("dashboard.html")
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template("404.html"), 404
 
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
