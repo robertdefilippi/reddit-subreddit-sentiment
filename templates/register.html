@@ -28,28 +28,28 @@
             <div class="card-header">Register an Account</div>
 
             <div class="card-body">
-                
+
                 <!-- Start Form -->
                 <form action="{{ url_for('register_user') }}" method="post">
                     <div class="form-group">
                         <div class="form-row">
-                
+
                             <!-- Email -->
                             <div class="col-md-6">
                                 <div class="form-label-group">
-                                    <input type="email" id="email-register" name="email-register" class="form-control" placeholder="Email"
-                                        required="required" autofocus="autofocus"
+                                    <input type="email" id="email-register" name="email-register" class="form-control"
+                                        placeholder="Email" required="required" autofocus="autofocus"
                                         pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}"
                                         data-error="Must be a valid email.">
                                     <label for="email-register">Email</label>
                                 </div>
                             </div>
-                
+
                             <!-- Password -->
                             <div class="col-md-6">
                                 <div class="form-label-group">
-                                    <input type="password" id="password-register" name="password-register" class="form-control"
-                                        placeholder="Password" required="required"
+                                    <input type="password" id="password-register" name="password-register"
+                                        class="form-control" placeholder="Password" required="required"
                                         pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                                         data-error="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                                         required>
@@ -58,27 +58,28 @@
                             </div>
                         </div>
                     </div>
-                    <input type="submit" id='submit-register' name='submit-register' class="btn btn-primary btn-block" href="{{ url_for('homepage') }}">
+                    <input type="submit" id='submit-register' name='submit-register' class="btn btn-primary btn-block"
+                        href="{{ url_for('homepage') }}">
                 </form>
             </div>
         </div>
     </div>
 
-  <!-- Javascript -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
+    <!-- Javascript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
-  <!-- Page level plugin JavaScript-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-  <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
 
 </body>
 

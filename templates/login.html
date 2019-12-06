@@ -28,32 +28,29 @@
       <div class="card-header">Login: Reddit Sentiment App</div>
 
       <div class="card-body">
-        <form>
+        <form action="{{ url_for('submit_login') }}" method="post">
           <div class="form-group">
             <div class="form-row">
-              
+
               <!-- Email -->
               <div class="col-md-6">
                 <div class="form-label-group">
-                  <input type="email" id="email-login" class="form-control" placeholder="Email" required="required"
-                    autofocus="autofocus" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}">
+                  <input type="email" id="email-login" name="email-login" class="form-control" placeholder="Email" required="required"
+                    autofocus="autofocus">
                   <label for="email-login">Email</label>
                 </div>
               </div>
-              
+
               <!-- Password -->
               <div class="col-md-6">
                 <div class="form-label-group">
-                  <input type="password" id="password-login" class="form-control" placeholder="Password"
-                    required="required" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                    required>
+                  <input type="password" id="password-login" name="password-login" class="form-control" placeholder="Password" required>
                   <label for="password-login">Password</label>
                 </div>
               </div>
             </div>
           </div>
-          <input type="submit" value="Login" class="btn btn-primary btn-block" href="{{ url_for('homepage') }}">
+          <input type="submit" id='submit-login' name='submit-login' class="btn btn-primary btn-block">
         </form>
 
         <div class="text-center">

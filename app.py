@@ -22,6 +22,7 @@ import pg_manager
 
 MAX_ROWS = 9000
 COOKIE_TIME_OUT = 60*5
+SECRET_KEY = '-j4uXaJVQXohwtelyPkr4A'
 
 # Start app and get credentials
 
@@ -31,6 +32,7 @@ db.set_credentials_and_connections()
 # Main app and logging instance
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = SECRET_KEY
 logging.basicConfig(level=logging.DEBUG)
 
 # Functions for interacting with app
@@ -116,44 +118,54 @@ def update_hist():
     app.logger.info(f'Post handled: {request.json}')
     return jsonify({'payload':json.dumps({'histogram_counts':histogram_counts})})
 
-
-# generate_password_hash('password')
-
 # check_password_hash('password_hash', 'password')
 
 @app.route('/submit_login', methods=['POST'])
 def submit_login():	
-    _email = request.form['input-email']
-    _password = request.form['input-password']
+    app.logger.info("Login submission: ", request.form)
+    
+    _email = request.form['email-login']
+    _password = request.form['password-login']
 
-    if 'email' in request.cookies:
-        username = request.cookies.get('email')
-        password = request.cookies.get('pwd')
+    email = session.get('email',None)
+    
+    app.logger.info(f"{_email}:: {_password}:: {email}")
 
-        password_hash = db.get_user_password_hash(username)
+    if email:
+        password = request.cookies.get('password')
+
+        password_hash = db.get_user_password_hash(email)
+        verify_user = check_password_hash(password_hash, password)
         
-        if password_hash and check_password_hash(password_hash, password):
-            session['email'] = username
+        if verify_user:
+            session['email'] = email
+            session['password'] = password_hash
             return redirect('/dashboard')
+        
         else:
+            flash('Invalid email/password!')
             return redirect('/login')
             
     elif _email and _password:
 		#check user exists			
         password_hash = db.get_user_password_hash(_email)
         if password_hash:
-            if check_password_hash(password_hash, _password):
+            verify_user = check_password_hash(password_hash, password)
+            if verify_user:
                 session['email'] = _email
                 resp = make_response(redirect('/dashboard'))
                 resp.set_cookie('email', _email, max_age=COOKIE_TIME_OUT)
                 resp.set_cookie('pwd', _password, max_age=COOKIE_TIME_OUT)
                 return resp
+            
             else:
                 flash('Invalid password!')
                 return redirect('/login')
+        
         else:
             flash('Invalid email/password!')
             return redirect('/login')
+    
     else:
         flash('Invalid email/password!')
         return redirect('/login')
@@ -164,21 +176,26 @@ def register_user():
     _email = request.form['email-register']
     _password = request.form['password-register']
     _password_hash = generate_password_hash(_password)
+    
+    # Set session
     session['email'] = _email
+    app.logger.info("Session set for: ", session['email'])
 
-    print(_password_hash)
-    print(session)
+    # Create new user
+    db.create_new_user(_email, _password_hash)
 
-    # db.create_new_user(_email, _password_hash)
-
-    render_template('login.html')
+    return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
-	if 'email' in session:
-		session.pop('email', None)
-	return redirect('login')
+    
+    session_email = session["email"]
+	
+    if session_email:
+        session.pop('email', None)
+
+    return redirect('login')
 
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')
@@ -193,26 +210,29 @@ def shutdown_server():
 @app.route('/', methods=['GET', 'POST'])
 def login_auth():
     
-    app.logger.info('Checking for login cookie ...')   
-    user_id = request.cookies.get('reddit_sentiment_cookie')
-    app.logger.info(f'Login cookie for current user: {user_id}')
+    session_email = session.get('email', None)
+    app.logger.info(f'Checking email {session_email} for session')   
     
-    user = db.get_user_password_hash(user_id) if user_id else None
+    password_hash = db.get_user_password_hash(session_email) if session_email else None
     
-    if user_id and user:
+    if session_email and password_hash:
         return redirect(url_for('dashboard'))
     else:
         return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'email' in session:
+    session_email = session.get('email', None)
+    
+    if session_email:
         return redirect(url_for(''))
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if 'email' in session:
+    session_email = session.get('email', None)
+    
+    if session_email:
         return redirect(url_for(''))
     return render_template('register.html')
     
