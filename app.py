@@ -227,16 +227,16 @@ def login_auth():
     password_hash = db.get_user_password_hash(session_email) if session_email else None
     
     if session_email and password_hash:
-        return redirect(url_for('dashboard'))
+        return render_template("dashboard.html")
     else:
-        return redirect(url_for('login'))
+        return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     session_email = session.get('email', None)
     
     if session_email:
-        return redirect(url_for(''))
+        return render_template("dashboard.html")
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -244,7 +244,7 @@ def register():
     session_email = session.get('email', None)
     
     if session_email:
-        return redirect(url_for(''))
+        return render_template('login.html')
     return render_template('register.html')
     
 @app.route('/dashboard')
