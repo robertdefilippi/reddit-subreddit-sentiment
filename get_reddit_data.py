@@ -12,6 +12,8 @@ from datetime import datetime
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 
+# Global variables
+
 CLIENT_ID = "s6mgv6DEda9oaQ"
 CLIENT_SECRET = "qYOaYTL74kczAeRaVsVR8zb3jUI"
 USER_AGENT = "chef_1075"
@@ -121,20 +123,34 @@ SUBREDDIT_LIST = ["all",
                   "blessedimages",
                   "technology"]
 
+# Check if the data exists, and if not download it
 try:
     nltk.data.find('sentiment/vader_lexicon')
+
 except LookupError:
     nltk.download('vader_lexicon')
 
 sia = SIA()
 
-# The compound score is computed by summing the valence scores of each word in the lexicon, 
-# adjusted according to the rules, and then normalized to be between -1 (most extreme negative) and +1 (most extreme positive). 
-# This is the most useful metric if you want a single unidimensional measure of sentiment for a given sentence. 
-#  Calling it a 'normalized, weighted composite score' is accurate.
+def get_subreddit_data() -> list:
+    """
+    Get the different sentiment values for subreddits. The scores returned are the positive, 
+    negative, neutral, and the compound score.
 
+    The compound score is computed by summing the valence scores of each 
+    word in the lexicon, adjusted according to the rules, and then normalized to 
+    be between -1 (most extreme negative) and +1 (most extreme positive). 
+    Calling it a 'normalized, weighted composite score' is accurate.
 
-def get_subreddit_data():
+    The compound score is used to generate the histogram.
+    
+    Returns:
+        list: Values to append to the database
+
+    Example:
+        get_subreddit_data()
+        >> [['2019-10-01', 'all', 'Some title to look at that is positive', 0, 0.2, 0.3, 0.5]]
+    """
 
     reddit = praw.Reddit(client_id=CLIENT_ID,
                          client_secret=CLIENT_SECRET,
@@ -142,6 +158,7 @@ def get_subreddit_data():
 
     headlines_sentiment_list = []
 
+    # Loop through subreddits to get their posts sentiment scores
     for subreddit in SUBREDDIT_LIST:
         try:
             for submission in reddit.subreddit(subreddit).hot(limit=20):
@@ -154,7 +171,4 @@ def get_subreddit_data():
                 f'Subreddit {subreddit} does not exist. Exception raise: {e}\n')
             pass
 
-    # df = pd.DataFrame(headlines_sentiment_list, columns=COLUMNS)
-
-    # return df
     return headlines_sentiment_list

@@ -5,6 +5,11 @@ import psycopg2
 import datetime
 import yaml
 
+"""Database Manager
+
+Performs the CRUD methods on the database.
+"""
+
 
 class DBConnect:
 
@@ -12,6 +17,9 @@ class DBConnect:
     _path = 'config.yml'
 
     def __new__(cls):
+        """
+        Makes sure there is only a single instance of the connection.
+        """
         if DBConnect._instance is None:
             DBConnect._instance = object.__new__(cls)
         return DBConnect._instance
@@ -27,6 +35,9 @@ class DBConnect:
         self._curr = None
 
     def get_credentials(self):
+        """
+        Get the database credentials.
+        """
         if os.path.exists(self._path):
             with open(self._path, 'r') as config_file:
                 yaml_loader = yaml.load(config_file, Loader=yaml.BaseLoader)
@@ -36,6 +47,9 @@ class DBConnect:
             print(f"The path {self._path} does not exist.")
 
     def set_credentials(self):
+        """
+        Set the credentials on self.
+        """
         self._host = self._config.get('host')
         self._username = self._config.get('username')
         self._password = self._config.get('password')
@@ -43,6 +57,9 @@ class DBConnect:
         self._dbname = self._config.get('database')
 
     def get_connection(self):
+        """
+        Check if there is a connection, and if there is done create one.
+        """
         try:
             if(self._conn is None):
                 self._conn = psycopg2.connect(dbname=self._dbname,
@@ -56,31 +73,33 @@ class DBConnect:
             print('Connection opened successfully.')
 
     def set_credentials_and_connections(self):
+        """
+        Perform the set up tasks for the database.
+        """
         if(self._conn is None):
             self.get_credentials()
             self.set_credentials()
             self.get_connection()
 
     def close_connection(self):
+        """
+        Close the connection to the database.
+        """
         self._conn.close()
 
-    def write_once(self):
-        cur = self._conn.cursor()
-        cur.execute("INSERT INTO sentiment (post_ts, subreddit, post_title, score_negative, score_neutral, score_positive, score_compound) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (datetime.datetime.now(),
-                     "foo",
-                     "foo",
-                     .1,
-                     .2,
-                     .3,
-                     .4))
+    def write_record(self, post_ts: str, subreddit: str, post_title: str, score_negative: str, score_neutral: str, score_positive: str, score_compound: str) -> None:
+        """
+        Write a single record to the data base
 
-        cur.execute("SELECT * FROM sentiment;")
-        print(cur.fetchone())
-        self._conn.commit()
-        cur.close()
-
-    def write_record(self, post_ts, subreddit, post_title, score_negative, score_neutral, score_positive, score_compound):
+        Args:
+            post_ts (str): Time stamp of when the post was captured from Reddit
+            subreddit (str): Subreddit name
+            post_title (str): Post title from the subreddit
+            score_negative (str): Negative score from the sentiment scorer
+            score_neutral (str): Neutral score from the sentiment scorer
+            score_positive (str): Positive score from the sentiment scorer
+            score_compound (str): Compoud score from the sentiment scorer
+        """
         cur = self._conn.cursor()
         cur.execute("INSERT INTO sentiment (post_ts, subreddit, post_title, score_negative, score_neutral, score_positive, score_compound) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (post_ts,
@@ -93,6 +112,18 @@ class DBConnect:
         self._conn.commit()
 
     def write_bulk(self, data):
+        """
+        Bulk write record to the database.
+
+        Args:
+            post_ts (str): Time stamp of when the post was captured from Reddit
+            subreddit (str): Subreddit name
+            post_title (str): Post title from the subreddit
+            score_negative (str): Negative score from the sentiment scorer
+            score_neutral (str): Neutral score from the sentiment scorer
+            score_positive (str): Positive score from the sentiment scorer
+            score_compound (str): Compoud score from the sentiment scorer
+        """
         cur = self._conn.cursor()
         args_str = ','.join(cur.mogrify(
             "(%s,%s,%s,%s,%s,%s,%s)", row).decode('utf-8') for row in data)
@@ -100,8 +131,13 @@ class DBConnect:
         cur.execute(sql)
         self._conn.commit()
 
-    def did_write_this_hour(self):
-        """Returns dt object from db
+    def did_write_this_hour(self) -> bool:
+        """
+        Check if there has been a database write within the last hour.
+
+        Returns:
+            value_to_return (bool): Returns true if there has been a
+            write, flase if there has not been a write.
         """
 
         value_to_return = None
@@ -125,7 +161,10 @@ class DBConnect:
 
         return value_to_return
 
-    def remove_duplicates(self):
+    def remove_duplicates(self) -> None:
+        """
+        Remove duplicate entries from the database.
+        """
 
         query_string = f"""    
         DELETE FROM sentiment a USING (
@@ -150,6 +189,19 @@ class DBConnect:
         cur.close()
 
     def get_histogram_data(self, subreddit_name: str):
+        """
+        Get the binned and normalized data for the histogram
+
+        Args:
+            subreddit_name (str): the name the subreddit the data
+            should come from.
+
+        Returns:
+            normalized_data_values (list)
+            data_labels (list) 
+            subreddit_name (str)
+
+        """
 
         data_values = []
         data_labels = []
@@ -194,7 +246,13 @@ class DBConnect:
 
         return normalized_data_values, data_labels, subreddit_name
 
-    def get_unique_categories(self):
+    def get_unique_categories(self) -> list:
+        """
+        Get a list of all the subreddits in the database.
+
+        Returns:
+            data_labels (list)
+        """
 
         data_labels = ['all']
 
@@ -219,9 +277,19 @@ class DBConnect:
 
         return data_labels
 
-    def get_random_rows(self, subreddit_name: str):
+    def get_random_rows(self, subreddit_name: str) -> list:
+        """
+        Get random rows from a sub reddit to populate a
+        table in the app.
 
-        data_labels = []
+        Args:
+            subreddit_name (str): The subreddit to get the rows from
+
+        Return:
+            random_rows (list): A list of rows to generate
+        """
+
+        random_rows = []
 
         query_string = f"""    
             SELECT
@@ -249,12 +317,22 @@ class DBConnect:
         result_set = cur.fetchall()
 
         for row in result_set:
-            data_labels.append(
+            random_rows.append(
                 [row[0], row[1], row[2], row[3], row[4], row[5]])
 
-        return data_labels
+        return random_rows
 
-    def get_card_counts(self, subreddit_name: str):
+    def get_card_counts(self, subreddit_name: str) -> list:
+        """
+        Get counts for the cards at the top of the app.
+
+        Args:
+            subreddit_name (str): The subreddit to get specific counts from
+            for each of the cards
+
+        Return:
+            data_results (list): A list counts for the cards
+        """
         data_results = []
 
         # New posts
@@ -321,7 +399,17 @@ class DBConnect:
 
         return data_results
 
-    def get_histogram_counts(self, subreddit_name: str = 'all'):
+    def get_histogram_counts(self, subreddit_name: str = 'all') -> list:
+        """
+        Get the individual counts of positive, negative, and neutral
+        scores for a specific subreddit.
+
+        Args:
+            subreddit_name (str): The subreddit to get specific counts for
+
+        Return:
+            data_results (list): A list counts for the subreddit
+        """
         data_results = []
 
         # Posts last hour
@@ -351,6 +439,9 @@ class DBConnect:
         return data_results
 
     def get_total_records(self):
+        """
+        Get the total number of records in the database.
+        """
 
         query_string = f"""    
         SELECT
@@ -365,7 +456,11 @@ class DBConnect:
 
         return result_set[0][0]
 
-    def delete_oldest_two_datetime(self):
+    def delete_oldest_two_datetime(self) -> None:
+        """
+        Get the oldest two datetimes, and delete all values which
+        match that datetime in the database.
+        """
 
         query_string = f"""    
         DELETE FROM 
@@ -390,7 +485,17 @@ class DBConnect:
         self._conn.commit()
         cur.close()
 
-    def check_if_exists(self, user_name):
+    def check_if_exists(self, user_name: str) -> bool:
+        """
+        Check if a user exists in the database.
+
+        Args:
+            user_name (str): The user name (email) to check in the database
+
+        Returns:
+            result (bool): True if the user exists in the database, false 
+            if not.
+        """
         query_string = f"""    
             SELECT
                 CASE WHEN user_name IS NULL
@@ -404,14 +509,20 @@ class DBConnect:
         cur = self._conn.cursor()
         cur.execute(query_string)
         result_set = cur.fetchall()
-        
+
         result = True if len(result_set) > 0 else False
 
         return result
 
+    def create_new_user(self, user_name: str, password: str) -> None:
+        """
+        Create a new user in the database if they don't already exist.
 
-    def create_new_user(self, user_name, password):
-        
+        Args:
+            user_name (str): The user name (email) to use in the database
+            user_name (str): The hased password to save in the database.
+        """
+
         query_string = f"""    
             INSERT INTO  sentiment_users (user_name, password)
             
@@ -431,7 +542,11 @@ class DBConnect:
         self._conn.commit()
         cur.close()
 
-    def get_user_password_hash(self, user_name):
+    def get_user_password_hash(self, user_name: str):
+        """
+        Get the hashed password of the user to determine if
+        if a user has inputted the correct password.
+        """
 
         query_string = f"""    
         SELECT
