@@ -123,13 +123,13 @@ SUBREDDIT_LIST = ["all",
 
 sia = SIA()
 
-cwd = os.getcwd()
-download_dir = cwd + "/data/"
-
-does_vader_exist = os.path.exists(download_dir + "sentiment/vader_lexicon.zip")
+does_vader_exist = os.path.exists("data/vader_lexicon/vader_lexicon.txt")
 
 if not does_vader_exist:
-    nltk.download('vader_lexicon', download_dir=download_dir)
+    nltk.download('vader_lexicon')
+
+else:
+    nltk.data.load("data/vader_lexicon/vader_lexicon.txt") 
 
 
 # The compound score is computed by summing the valence scores of each word in the lexicon, 

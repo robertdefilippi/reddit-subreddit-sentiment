@@ -277,6 +277,5 @@ if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.secret_key = os.urandom(12)
-    # app.run(debug=True, host="localhost", port=8000)
     init_scheduler()
-    app.run()
+    app.run(threaded=True)
