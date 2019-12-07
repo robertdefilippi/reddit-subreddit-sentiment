@@ -448,7 +448,6 @@ def shutdown():
         flask.Response: response object with data values
     """
     app.logger.info(f'Forcing Shutdown: {request.json}')
-    atexit.register(lambda: scheduler.shutdown())
     shutdown_server()
     shutdown_message = 'Server shutting down...'
 
