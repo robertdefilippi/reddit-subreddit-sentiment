@@ -27,6 +27,7 @@
     <select id="select-dropdown" class="form-control col-xl-2 col-sm-2 mb-2" onchange=get_data()>
       <option value="1" name="select-dropdown">all</option>
     </select>
+    <a class="navbar-nav ml-auto" style="color:white" href="{{ url_for('logout') }}">Logout</a>
 
   </nav>
 
@@ -36,7 +37,6 @@
         <li class="breadcrumb-item">
           <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active">My Dashboard</li>
       </ol>
       <div class="row">
         <div class="col-xl-3 col-sm-6 mb-3">
@@ -105,7 +105,7 @@
                 </div>
               </div>
             </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            <div class="card-footer small text-muted"></div>
           </div>
         </div>
         <div class="col-lg-4">
@@ -134,7 +134,7 @@
             </table>
           </div>
         </div>
-        <div class="card-footer small text-muted">Updated yesterday at </div>
+        <div class="card-footer small text-muted"></div>
       </div>
       <!-- /.container-fluid -->
 

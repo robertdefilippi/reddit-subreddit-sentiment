@@ -390,6 +390,26 @@ class DBConnect:
         self._conn.commit()
         cur.close()
 
+    def check_if_exists(self, user_name):
+        query_string = f"""    
+            SELECT
+                CASE WHEN user_name IS NULL
+                THEN False
+                ELSE True
+            END AS does_exist
+
+        FROM sentiment_users WHERE user_name = ('{user_name}')
+        """
+
+        cur = self._conn.cursor()
+        cur.execute(query_string)
+        result_set = cur.fetchall()
+        
+        result = True if len(result_set) > 0 else False
+
+        return result
+
+
     def create_new_user(self, user_name, password):
         
         query_string = f"""    
@@ -427,4 +447,6 @@ class DBConnect:
         cur.execute(query_string)
         result_set = cur.fetchall()
 
-        return result_set[0][0]
+        result = result_set[0][0] if len(result_set) > 0 else None
+
+        return result

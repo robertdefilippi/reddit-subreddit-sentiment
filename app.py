@@ -74,8 +74,6 @@ def init_scheduler():
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
-init_scheduler()
-
 ###############
 # App functions
 ###############
@@ -106,7 +104,8 @@ def submit_handler():
 def update_cards():
     subreddit_name = request.args.get('vals')
     data_values = db.get_card_counts(subreddit_name)
-    print(subreddit_name, data_values)
+    app.logger.info(f'Subreddit: {subreddit_name}')
+    app.logger.info(f'Data values: {data_values}')
     app.logger.info(f'Post handled: {request.json}')
     return jsonify({'payload':json.dumps({'data_values':data_values})})
 
@@ -118,83 +117,95 @@ def update_hist():
     app.logger.info(f'Post handled: {request.json}')
     return jsonify({'payload':json.dumps({'histogram_counts':histogram_counts})})
 
-# check_password_hash('password_hash', 'password')
-
 @app.route('/submit_login', methods=['POST'])
 def submit_login():	
-    app.logger.info("Login submission: ", request.form)
+    app.logger.info("Login submission")
+    request_dict = request.form.to_dict()   
     
-    _email = request.form['email-login']
-    _password = request.form['password-login']
+    form_email = request_dict.get('email-login', None)
+    from_password = request_dict.get('password-login', None)
 
-    email = session.get('email',None)
+    session_email = session.get('email', None)
     
-    app.logger.info(f"{_email}:: {_password}:: {email}")
+    if session_email:
+        # Users has session
+        app.logger.info("Received email from login")
+        password_hash = db.get_user_password_hash(form_email)
 
-    if email:
-        password = request.cookies.get('password')
-
-        password_hash = db.get_user_password_hash(email)
-        verify_user = check_password_hash(password_hash, password)
+        verify_user = check_password_hash(password_hash, from_password)
         
         if verify_user:
-            session['email'] = email
-            session['password'] = password_hash
+            app.logger.info("User password verified. Redirecting to dashboard.")
+            session['email'] = session_email
             return redirect('/dashboard')
         
         else:
+            app.logger.info("Invalid email/password!")
             flash('Invalid email/password!')
             return redirect('/login')
             
-    elif _email and _password:
-		#check user exists			
-        password_hash = db.get_user_password_hash(_email)
+    elif form_email and from_password:
+        app.logger.info("User does not have session. Checking password.")
+        password_hash = db.get_user_password_hash(form_email)
+        
         if password_hash:
-            verify_user = check_password_hash(password_hash, password)
+            app.logger.info("Verifying user")
+            verify_user = check_password_hash(password_hash, from_password)
+        
             if verify_user:
-                session['email'] = _email
+                app.logger.info("User verified. Redirecting to dashbaord")
+                session['email'] = form_email
                 resp = make_response(redirect('/dashboard'))
-                resp.set_cookie('email', _email, max_age=COOKIE_TIME_OUT)
-                resp.set_cookie('pwd', _password, max_age=COOKIE_TIME_OUT)
                 return resp
             
             else:
+                app.logger.info("'Invalid password!'")
                 flash('Invalid password!')
                 return redirect('/login')
         
         else:
+            app.logger.info("Invalid email/password!")
             flash('Invalid email/password!')
             return redirect('/login')
     
     else:
+        app.logger.info("Invalid email/password!")
         flash('Invalid email/password!')
         return redirect('/login')
 
 @app.route('/register_user', methods=['POST'])
 def register_user():
-    app.logger.info("Regisration submission: ", request.form)
+    app.logger.info(f"Regisration submission: {request.form}")
     _email = request.form['email-register']
     _password = request.form['password-register']
-    _password_hash = generate_password_hash(_password)
-    
-    # Set session
-    session['email'] = _email
-    app.logger.info("Session set for: ", session['email'])
 
-    # Create new user
-    db.create_new_user(_email, _password_hash)
+    does_user_exist = db.check_if_exists(_email)
 
-    return render_template('login.html')
+    if does_user_exist:
+        flash('User already exists ... try logging in')
+        return render_template('login.html')
+
+    else:
+        _password_hash = generate_password_hash(_password)
+        # Set session
+        session['email'] = _email
+        app.logger.info(f"Session set for: {_email}")
+
+        # Create new user
+        db.create_new_user(_email, _password_hash)
+        
+        flash('Successfully created a new users!')
+        return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
     
-    session_email = session["email"]
+    session_email = session.get('email', None)
 	
     if session_email:
         session.pop('email', None)
-
+    flash('Logged out')
     return redirect('login')
 
 def shutdown_server():
@@ -238,8 +249,14 @@ def register():
     
 @app.route('/dashboard')
 def homepage():
-    return render_template("dashboard.html")
-
+    session_email = session.get('email', None)
+    
+    if session_email:
+        return render_template("dashboard.html")
+    else:
+        flash('Login required')
+        return render_template('login.html')
+    
 @app.errorhandler(404)
 def not_found(error):
     return render_template("404.html"), 404		
@@ -260,5 +277,7 @@ if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.secret_key = os.urandom(12)
-    app.run(debug=True, host="localhost", port=8888)
-    # app.run(threaded=True, host="localhost", port=8888)
+    # app.run(debug=True, host="localhost", port=8000)
+    # init_scheduler()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, threaded=True)
