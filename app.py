@@ -65,8 +65,6 @@ db.set_credentials_and_connections()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 logging.basicConfig(level=logging.DEBUG)
-session.permanent = True
-app.permanent_session_lifetime = timedelta(minutes=SESSION_LENGTH_MINUTES)
 
 ###############
 # App functions
@@ -111,7 +109,8 @@ def check_did_write() -> None:
 
 
 def get_data_values(subreddit_name: str) -> list:
-    """Get values for the histogram graph, from a specific subreddit. 
+    """
+    Get values for the histogram graph, from a specific subreddit. 
 
     Args:
         subreddit_name (str): The subreddit to get the values from
@@ -121,6 +120,13 @@ def get_data_values(subreddit_name: str) -> list:
     """
     return db.get_histogram_data(subreddit_name)
 
+@app.before_request
+def make_session_permanent() -> None:
+    """
+    Set how long a session should be
+    """
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=SESSION_LENGTH_MINUTES)
 
 @app.before_first_request
 def init_scheduler() -> None:
