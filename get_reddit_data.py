@@ -121,16 +121,12 @@ SUBREDDIT_LIST = ["all",
                   "blessedimages",
                   "technology"]
 
-sia = SIA()
-
-does_vader_exist = os.path.exists("data/vader_lexicon/vader_lexicon.txt")
-
-if not does_vader_exist:
+try:
+    nltk.data.find('sentiment/vader_lexicon')
+except LookupError:
     nltk.download('vader_lexicon')
 
-else:
-    nltk.data.load("data/vader_lexicon/vader_lexicon.txt") 
-
+sia = SIA()
 
 # The compound score is computed by summing the valence scores of each word in the lexicon, 
 # adjusted according to the rules, and then normalized to be between -1 (most extreme negative) and +1 (most extreme positive). 
