@@ -278,6 +278,6 @@ if __name__ == "__main__":
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.secret_key = os.urandom(12)
     # app.run(debug=True, host="localhost", port=8000)
-    # init_scheduler()
+    init_scheduler()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, threaded=True)
