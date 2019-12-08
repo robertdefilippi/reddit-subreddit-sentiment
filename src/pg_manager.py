@@ -170,7 +170,7 @@ class DBConnect:
         DELETE FROM sentiment a USING (
         
             SELECT 
-                MIN(post_ts) as post_ts,
+                MIN(id) as id,
                 post_title
             
             FROM sentiment
@@ -180,7 +180,7 @@ class DBConnect:
       
         WHERE 
             a.post_title = b.post_title
-            AND a.post_ts <> b.post_ts
+            AND a.id <> b.id
         """
 
         cur = self._conn.cursor()
