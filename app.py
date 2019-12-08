@@ -59,6 +59,7 @@ SESSION_LENGTH_MINUTES = 5
 
 db = pg_manager.DBConnect()
 db.set_credentials_and_connections()
+scheduler = BackgroundScheduler()
 
 # Main app, logging, and session time
 
@@ -136,10 +137,10 @@ def init_scheduler() -> None:
     Schedule accessing reddit every 30 mintues to get the top headlines 
     and run a sentiment analysis.
     """
-    scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_did_write, trigger="interval",
                       minutes=10, misfire_grace_time=10)
     scheduler.start()
+    
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
@@ -376,6 +377,9 @@ def login_auth():
     Returns:
         flask.Response: response object with data values
     """
+    
+    for job in scheduler.get_jobs():
+        print(f"name: {job.name}, trigger: {job.trigger}, next run: {job.next_run_time}, handler: {job.func}")
 
     session_email = session.get('email', None)
     app.logger.info(f'Checking email {session_email} for session')
