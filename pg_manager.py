@@ -242,7 +242,7 @@ class DBConnect:
 
         data_values_total = sum(data_values)
 
-        normalized_data_values = [x / data_values_total for x in data_values]
+        normalized_data_values = [round(x / data_values_total, 5) for x in data_values]
 
         return normalized_data_values, data_labels, subreddit_name
 
