@@ -129,6 +129,7 @@ def make_session_permanent() -> None:
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=SESSION_LENGTH_MINUTES)
 
+
 @app.route('/get_data')
 def get_data():
     """
@@ -350,9 +351,10 @@ def shutdown_server():
 # Scheduling
 ###############
 
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=check_did_write, trigger="interval",
-                minutes=10, misfire_grace_time=10)
+                  minutes=10, misfire_grace_time=10)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
@@ -373,7 +375,7 @@ def login_auth():
     Returns:
         flask.Response: response object with data values
     """
-    
+
     scheduler.print_jobs()
 
     session_email = session.get('email', None)

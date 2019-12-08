@@ -344,7 +344,7 @@ class DBConnect:
 
         WHERE 
             subreddit = ('{subreddit_name}')
-            AND post_ts = (SELECT MAX(post_ts) FROM sentiment)
+            AND post_ts = (SELECT MAX(post_ts) FROM sentiment WHERE subreddit = ('{subreddit_name}') )
         """
 
         cur = self._conn.cursor()
