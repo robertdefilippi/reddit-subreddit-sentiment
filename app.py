@@ -52,6 +52,7 @@ Author: Robert DeFilippi
 
 MAX_ROWS = 8900
 COOKIE_TIME_OUT = 60*5
+SECRET_KEY = os.urandom(12)
 SESSION_LENGTH_MINUTES = 5
 
 # Start app and get credentials
@@ -451,7 +452,6 @@ def shutdown():
 
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
-    app.secret_key = os.urandom(12)
     
     if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
         scheduler.add_job(func=check_did_write, trigger="interval",
