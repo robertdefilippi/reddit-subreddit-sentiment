@@ -137,12 +137,13 @@ def init_scheduler() -> None:
     Schedule accessing reddit every 30 mintues to get the top headlines 
     and run a sentiment analysis.
     """
-    scheduler.add_job(func=check_did_write, trigger="interval",
-                      minutes=10, misfire_grace_time=10)
-    scheduler.start()
-    
-    # Shut down the scheduler when exiting the app
-    atexit.register(lambda: scheduler.shutdown())
+    if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        scheduler.add_job(func=check_did_write, trigger="interval",
+                        minutes=10, misfire_grace_time=10)
+        scheduler.start()
+        
+        # Shut down the scheduler when exiting the app
+        atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route('/get_data')
@@ -469,4 +470,4 @@ def shutdown():
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
     app.secret_key = os.urandom(12)
-    app.run(threaded=True)
+    app.run(threaded=True, use_reloader=False)
