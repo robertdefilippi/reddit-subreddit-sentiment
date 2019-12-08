@@ -379,8 +379,7 @@ def login_auth():
         flask.Response: response object with data values
     """
     
-    for job in scheduler.get_jobs():
-        print(f"name: {job.name}, trigger: {job.trigger}, next run: {job.next_run_time}, handler: {job.func}")
+    scheduler.print_jobs()
 
     session_email = session.get('email', None)
     app.logger.info(f'Checking email {session_email} for session')
