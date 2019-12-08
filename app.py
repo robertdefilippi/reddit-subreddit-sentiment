@@ -52,7 +52,6 @@ Author: Robert DeFilippi
 
 MAX_ROWS = 8900
 COOKIE_TIME_OUT = 60*5
-SECRET_KEY = '-j4uXaJVQXohwtelyPkr4A'
 SESSION_LENGTH_MINUTES = 5
 
 # Start app and get credentials
