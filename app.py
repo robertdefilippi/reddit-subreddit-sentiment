@@ -60,18 +60,11 @@ SESSION_LENGTH_MINUTES = 5
 db = pg_manager.DBConnect()
 db.set_credentials_and_connections()
 
-# Main app, logging, and session time
+# Main app and logging
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 logging.basicConfig(level=logging.DEBUG)
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=check_did_write, trigger="interval",
-                minutes=10, misfire_grace_time=10)
-scheduler.start()
-
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
 
 ###############
 # App functions
@@ -352,6 +345,18 @@ def shutdown_server():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
+###############
+# Scheduling
+###############
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=check_did_write, trigger="interval",
+                minutes=10, misfire_grace_time=10)
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
 
 ###############
 # Routes
