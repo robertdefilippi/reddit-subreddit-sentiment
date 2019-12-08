@@ -161,7 +161,7 @@ def get_subreddit_data() -> list:
     # Loop through subreddits to get their posts sentiment scores
     for subreddit in SUBREDDIT_LIST:
         try:
-            for submission in reddit.subreddit(subreddit).hot(limit=20):
+            for submission in reddit.subreddit(subreddit).hot(limit=10):
                 pol_score = sia.polarity_scores(submission.title)
                 headlines_sentiment_list.append(
                     (NOW, subreddit, submission.title, pol_score['neg'], pol_score['neu'], pol_score['pos'], pol_score['compound'])

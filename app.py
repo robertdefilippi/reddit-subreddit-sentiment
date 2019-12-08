@@ -19,8 +19,8 @@ import logging
 from os.path import exists
 from os import makedirs
 
-import get_reddit_data
-import pg_manager
+from src import get_reddit_data
+from src import pg_manager
 
 """Reddit Sentiment App
 
@@ -50,7 +50,7 @@ Author: Robert DeFilippi
 
 # Global variables
 
-MAX_ROWS = 9000
+MAX_ROWS = 8900
 COOKIE_TIME_OUT = 60*5
 SECRET_KEY = '-j4uXaJVQXohwtelyPkr4A'
 SESSION_LENGTH_MINUTES = 5
@@ -138,7 +138,7 @@ def init_scheduler() -> None:
     """
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_did_write, trigger="interval",
-                      minutes=20, misfire_grace_time=10)
+                      minutes=10, misfire_grace_time=10)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
