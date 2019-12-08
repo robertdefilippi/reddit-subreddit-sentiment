@@ -466,7 +466,7 @@ class DBConnect:
         DELETE FROM 
             sentiment
         WHERE
-            post_title IN (SELECT post_title FROM sentiment ORDER BY RANDOM () LIMIT 1100;)
+            post_title IN (SELECT post_title FROM sentiment ORDER BY RANDOM () LIMIT 1100)
         """
 
         cur = self._conn.cursor()
