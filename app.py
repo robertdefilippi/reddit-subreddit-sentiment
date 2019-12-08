@@ -99,6 +99,7 @@ def check_did_write() -> None:
     is_less_nine_thousand_rows = number_rows <= MAX_ROWS
 
     if not is_less_nine_thousand_rows:
+        app.logger.info('Over max number of rows. Removing some random rows.')
         db.delete_oldest_two_datetime()
 
     if did_write and is_less_nine_thousand_rows:
@@ -354,7 +355,7 @@ def shutdown_server():
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=check_did_write, trigger="interval",
-                  minutes=10, misfire_grace_time=10)
+                  minutes=30, misfire_grace_time=10)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
