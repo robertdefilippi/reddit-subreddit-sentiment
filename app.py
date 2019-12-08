@@ -453,12 +453,11 @@ def shutdown():
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
     
-    if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-        scheduler.add_job(func=check_did_write, trigger="interval",
-                        minutes=10, misfire_grace_time=10)
-        scheduler.start()
-        
-        # Shut down the scheduler when exiting the app
-        atexit.register(lambda: scheduler.shutdown())
+    scheduler.add_job(func=check_did_write, trigger="interval",
+                    minutes=10, misfire_grace_time=10)
+    scheduler.start()
+    
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())
     
     app.run(threaded=True, use_reloader=False)
