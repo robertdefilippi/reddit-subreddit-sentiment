@@ -59,7 +59,6 @@ SESSION_LENGTH_MINUTES = 5
 
 db = pg_manager.DBConnect()
 db.set_credentials_and_connections()
-scheduler = BackgroundScheduler()
 
 # Main app, logging, and session time
 
@@ -453,6 +452,7 @@ def shutdown():
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
     
+    scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_did_write, trigger="interval",
                     minutes=10, misfire_grace_time=10)
     scheduler.start()
