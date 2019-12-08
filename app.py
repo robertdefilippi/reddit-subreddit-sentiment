@@ -464,8 +464,5 @@ def shutdown():
 
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
-    app.jinja_env.auto_reload = True
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.secret_key = os.urandom(12)
-    init_scheduler()
     app.run(threaded=True)
