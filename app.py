@@ -138,7 +138,7 @@ def init_scheduler() -> None:
     """
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_did_write, trigger="interval",
-                      minutes=30, misfire_grace_time=10)
+                      minutes=20, misfire_grace_time=10)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
