@@ -144,15 +144,6 @@ def init_scheduler() -> None:
     atexit.register(lambda: scheduler.shutdown())
 
 
-@app.before_first_request
-def init_data() -> None:
-    """
-    Write sentiment data on start up. This will only run once,
-    and then the updates will be handled by BackgroundScheduler()
-    """
-    check_did_write()
-
-
 @app.route('/get_data')
 def get_data():
     """
