@@ -120,6 +120,7 @@ def get_data_values(subreddit_name: str) -> list:
     """
     return db.get_histogram_data(subreddit_name)
 
+
 @app.before_request
 def make_session_permanent() -> None:
     """
@@ -127,6 +128,7 @@ def make_session_permanent() -> None:
     """
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=SESSION_LENGTH_MINUTES)
+
 
 @app.before_first_request
 def init_scheduler() -> None:
@@ -140,6 +142,15 @@ def init_scheduler() -> None:
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
+
+
+@app.before_first_request
+def init_data() -> None:
+    """
+    Write sentiment data on start up. This will only run once,
+    and then the updates will be handled by BackgroundScheduler()
+    """
+    check_did_write()
 
 
 @app.route('/get_data')
