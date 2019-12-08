@@ -65,6 +65,13 @@ db.set_credentials_and_connections()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 logging.basicConfig(level=logging.DEBUG)
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=check_did_write, trigger="interval",
+                minutes=10, misfire_grace_time=10)
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
 
 ###############
 # App functions
@@ -451,13 +458,4 @@ def shutdown():
 
 if __name__ == "__main__":
     app.logger.info(f'Starting App ...')
-    
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(func=check_did_write, trigger="interval",
-                    minutes=10, misfire_grace_time=10)
-    scheduler.start()
-    
-    # Shut down the scheduler when exiting the app
-    atexit.register(lambda: scheduler.shutdown())
-    
     app.run(threaded=True, use_reloader=False)
