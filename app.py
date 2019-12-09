@@ -253,7 +253,7 @@ def submit_login():
         else:
             app.logger.info("Invalid email/password!")
             flash('Invalid email/password!')
-            return redirect('/login')
+            return redirect(url_for('login'))
 
     # Check if user password is correct, if they don't have a session already
     elif form_email and from_password:
@@ -274,17 +274,17 @@ def submit_login():
             else:
                 app.logger.info("Invalid password!")
                 flash('Invalid password!')
-                return redirect('/login')
+                return redirect(url_for('login'))
 
         else:
             app.logger.info("Invalid email/password!")
             flash('Invalid email/password!')
-            return redirect('/login')
+            return redirect(url_for('login'))
 
     else:
         app.logger.info("Invalid email/password!")
         flash('Invalid email/password!')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
 
 @app.route('/register_user', methods=['POST'])
