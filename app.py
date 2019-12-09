@@ -286,6 +286,8 @@ def submit_login():
         flash('Invalid email/password!')
         return redirect(url_for('login'))
 
+    app.logger.info("HERE")
+
 
 @app.route('/register_user', methods=['POST'])
 def register_user():
@@ -383,7 +385,7 @@ def login():
     """
     session_email = session.get('email', None)
 
-    app.logger.info(f'Checking email {session_email} for session')
+    app.logger.info(f'Checking email {session_email} for session from login')
 
     if session_email:
         return render_template("dashboard.html")
