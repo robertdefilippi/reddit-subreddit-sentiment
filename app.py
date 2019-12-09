@@ -324,23 +324,6 @@ def register_user():
         return render_template('login.html')
 
 
-@app.route('/logout')
-def logout():
-    """
-    Logout the user, and remove the session.
-
-    Returns:
-        flask.Response: response object with data values
-    """
-
-    session_email = session.get('email', None)
-
-    if session_email:
-        session.pop('email', None)
-    flash('Logged out')
-    return redirect('login')
-
-
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
@@ -387,7 +370,7 @@ def login_auth():
     if session_email and password_hash:
         return render_template("dashboard.html")
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -400,9 +383,27 @@ def login():
     """
     session_email = session.get('email', None)
 
+    app.logger.info(f'Checking email {session_email} for session')
+
     if session_email:
         return render_template("dashboard.html")
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    """
+    Logout the user, and remove the session.
+
+    Returns:
+        flask.Response: response object with data values
+    """
+
+    session_email = session.get('email', None)
+
+    if session_email:
+        session.pop('email', None)
+    flash('Logged out')
+    return redirect('login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
