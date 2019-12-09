@@ -241,14 +241,20 @@ def submit_login():
         app.logger.info("Received email from login")
         password_hash = db.get_user_password_hash(form_email)
 
-        verify_user = check_password_hash(password_hash, from_password)
+        password_hash_str = "None" if password_hash is None else password_hash
+
+        app.logger.DEBUG(f"Password hash: {password_hash_str}")
+
+        verify_user = check_password_hash(password_hash_str, from_password)
+
+        app.logger.DEBUG(f"Verify user: {verify_user}")
 
         # Check if user password is correct
         if verify_user:
             app.logger.info(
                 "User password verified. Redirecting to dashboard.")
             session['email'] = session_email
-            return redirect('/dashboard')
+            return render_template('dashboard.html')
 
         else:
             app.logger.info("Invalid email/password!")
@@ -268,7 +274,7 @@ def submit_login():
             if verify_user:
                 app.logger.info("User verified. Redirecting to dashbaord")
                 session['email'] = form_email
-                resp = make_response(redirect('/dashboard'))
+                resp = render_template('dashboard.html')
                 return resp
 
             else:
@@ -285,8 +291,6 @@ def submit_login():
         app.logger.info("Invalid email/password!")
         flash('Invalid email/password!')
         return redirect(url_for('login'))
-
-    app.logger.info("HERE")
 
 
 @app.route('/register_user', methods=['POST'])
