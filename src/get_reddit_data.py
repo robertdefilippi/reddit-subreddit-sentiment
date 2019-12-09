@@ -17,7 +17,6 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 CLIENT_ID = "s6mgv6DEda9oaQ"
 CLIENT_SECRET = "qYOaYTL74kczAeRaVsVR8zb3jUI"
 USER_AGENT = "chef_1075"
-NOW = datetime.now()
 
 COLUMNS = ['post_ts', 'subreddit', 'title', 'score_neg',
            'score_neu', 'score_pos', 'score_compound']
@@ -34,29 +33,20 @@ SUBREDDIT_LIST = ["all",
                   "aww",
                   "worldnews",
                   "memes",
-                  "modernwarfare",
                   "tifu",
-                  "interestingasfuck",
                   "todayilearned",
-                  "BlackPeopleTwitter",
                   "nextfuckinglevel",
                   "PublicFreakout",
                   "Wellthatsucks",
-                  "nba",
                   "gifs",
                   "movies",
                   "Showerthoughts",
                   "dankmemes",
                   "trashy",
-                  "television",
-                  "Jokes",
-                  "AskMen",
                   "freefolk",
                   "insaneparents",
                   "unpopularopinion",
                   "insanepeoplefacebook",
-                  "IdiotsInCars",
-                  "leagueoflegends",
                   "NoStupidQuestions",
                   "nottheonion",
                   "teenagers",
@@ -64,62 +54,37 @@ SUBREDDIT_LIST = ["all",
                   "mildlyinteresting",
                   "starterpacks",
                   "LifeProTips",
-                  "soccer",
                   "WTF",
                   "WatchPeopleDieInside",
-                  "gatekeeping",
-                  "pokemon",
-                  "WhitePeopleTwitter",
                   "pcmasterrace",
                   "Unexpected",
                   "oddlysatisfying",
                   "Whatcouldgowrong",
                   "science",
-                  "TrueOffMyChest",
-                  "NintendoSwitch",
-                  "Android",
                   "TwoXChromosomes",
-                  "KidsAreFuckingStupid",
-                  "LivestreamFail",
-                  "HistoryMemes",
-                  "assholedesign",
-                  "Tinder",
                   "MaliciousCompliance",
-                  "therewasanattempt",
                   "Music",
-                  "PewdiepieSubmissions",
                   "dataisbeautiful",
                   "wholesomememes",
                   "facepalm",
                   "cursedcomments",
                   "worldpolitics",
-                  "nfl",
                   "awfuleverything",
                   "wallstreetbets",
-                  "MMA",
-                  "iamatotalpieceofshit",
                   "explainlikeimfive",
                   "comedyheaven",
                   "OldSchoolCool",
                   "whatisthisthing",
                   "legaladvice",
-                  "blursedimages",
                   "HumansBeingBros",
                   "mildlyinfuriating",
-                  "Games",
                   "Cringetopia",
                   "space",
-                  "ProgrammerHumor",
-                  "DestinyTheGame",
-                  "sex",
+                  "ProgrammerHumor",              
                   "ChoosingBeggars",
                   "PoliticalHumor",
                   "rareinsults",
-                  "classicwow",
                   "personalfinance",
-                  "Minecraft",
-                  "instantkarma",
-                  "RoastMe",
                   "blessedimages",
                   "technology"]
 
@@ -152,6 +117,8 @@ def get_subreddit_data() -> list:
         >> [['2019-10-01', 'all', 'Some title to look at that is positive', 0, 0.2, 0.3, 0.5]]
     """
 
+    current_datetime = datetime.now()
+
     reddit = praw.Reddit(client_id=CLIENT_ID,
                          client_secret=CLIENT_SECRET,
                          user_agent=USER_AGENT)
@@ -161,10 +128,10 @@ def get_subreddit_data() -> list:
     # Loop through subreddits to get their posts sentiment scores
     for subreddit in SUBREDDIT_LIST:
         try:
-            for submission in reddit.subreddit(subreddit).hot(limit=10):
+            for submission in reddit.subreddit(subreddit).hot(limit=15):
                 pol_score = sia.polarity_scores(submission.title)
                 headlines_sentiment_list.append(
-                    (NOW, subreddit, submission.title, pol_score['neg'], pol_score['neu'], pol_score['pos'], pol_score['compound'])
+                    (current_datetime, subreddit, submission.title, pol_score['neg'], pol_score['neu'], pol_score['pos'], pol_score['compound'])
                     )
         except Exception as e:
             print(

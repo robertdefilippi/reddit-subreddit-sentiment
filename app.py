@@ -108,7 +108,6 @@ def check_did_write() -> None:
         app.logger.info('Writing data.')
         write_reddit_data()
 
-
 def get_data_values(subreddit_name: str) -> list:
     """
     Get values for the histogram graph, from a specific subreddit. 
