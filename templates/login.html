@@ -28,9 +28,9 @@
     {% if messages %}
     {% for category, message in messages %}
     {% if category == 'message' %}
-    <div class="alert alert-warning" id="flash" role="alert"> 
+    <div class="alert alert-warning" id="flash" role="alert">
       {% else %}
-      <div class="alert alert-{{ category }}" id="flash" role="alert"> 
+      <div class="alert alert-{{ category }}" id="flash" role="alert">
         {% endif %}
         {{ message }}
       </div>
@@ -39,68 +39,68 @@
       {% endwith %}
     </div>
   </div>
-  
-    <div class="container">
-      <div class="card card-register mx-auto mt-5">
-        <div class="card-header">Login: Reddit Sentiment App</div>
 
-        <div class="card-body">
-          <form action="{{ url_for('submit_login') }}" method="post">
-            <div class="form-group">
-              <div class="form-row">
+  <div class="container">
+    <div class="card card-register mx-auto mt-5">
+      <div class="card-header">Login: Reddit Sentiment App</div>
 
-                <!-- Email -->
-                <div class="col-md-6">
-                  <div class="form-label-group">
-                    <input type="email" id="email-login" name="email-login" class="form-control" placeholder="Email"
-                      required="required" autofocus="autofocus">
-                    <label for="email-login">Email</label>
-                  </div>
+      <div class="card-body">
+        <form action="{{ url_for('submit_login') }}" method="post">
+          <div class="form-group">
+            <div class="form-row">
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="email" id="email-login" name="email-login" class="form-control" placeholder="Email"
+                    pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}" required="required" autofocus="autofocus">
+                  <label for="email-login">Email</label>
                 </div>
+              </div>
 
-                <!-- Password -->
-                <div class="col-md-6">
-                  <div class="form-label-group">
-                    <input type="password" id="password-login" name="password-login" class="form-control"
-                      placeholder="Password" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}"
-                      title="Must be a valid email."
-                      required>
-                    <label for="password-login">Password</label>
-                  </div>
+              <!-- Password -->
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="password" id="password-login" name="password-login" class="form-control"
+                    placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                    required>
+                  <label for="password-login">Password</label>
                 </div>
               </div>
             </div>
-            <input type="submit" id='submit-login' name='submit-login' class="btn btn-primary btn-block">
-          </form>
-
-          <div class="text-center">
-            <a class="d-block small mt-3" href="{{ url_for('register') }}">Not Registered?</a>
           </div>
+          <input type="submit" id='submit-login' name='submit-login' class="btn btn-primary btn-block">
+        </form>
+
+        <div class="text-center">
+          <a class="d-block small mt-3" href="{{ url_for('register') }}">Not Registered?</a>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Javascript -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"></script>
+  <!-- Javascript -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 
-    <!-- Page level plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
+  <!-- Page level plugin JavaScript-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
 
-    <script>
-      $(function () {
-        $('#flash').delay(2000).animate({opacity: 0}, 3000);
-      });
-    </script>
+  <script>
+    $(function () {
+      $('#flash').delay(2000).animate({ opacity: 0 }, 3000);
+    });
+  </script>
 </body>
 
 </html>
