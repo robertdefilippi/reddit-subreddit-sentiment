@@ -62,7 +62,9 @@
                 <div class="col-md-6">
                   <div class="form-label-group">
                     <input type="password" id="password-login" name="password-login" class="form-control"
-                      placeholder="Password" required>
+                      placeholder="Password" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}"
+                      title="Must be a valid email."
+                      required>
                     <label for="password-login">Password</label>
                   </div>
                 </div>
