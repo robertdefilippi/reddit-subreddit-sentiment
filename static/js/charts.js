@@ -72,6 +72,10 @@ function print_chart(_data_values, _data_labels, _subreddit_name) {
           },
           gridLines: {
             color: "rgba(0, 0, 0, 0)",
+          },
+            scaleLabel: {
+            display: true,
+            labelString: "<<< More Negative Posts     More Positive Posts >>>",
           }
         }
         ],
