@@ -241,11 +241,7 @@ def submit_login():
         app.logger.info("Received email from login")
         password_hash = db.get_user_password_hash(form_email)
 
-        password_hash_str = "None" if password_hash is None else password_hash
-
-        app.logger.info(password_hash_str)
-
-        verify_user = check_password_hash(password_hash_str, from_password)
+        verify_user = check_password_hash(password_hash, from_password)
 
         app.logger.info(verify_user)
 
