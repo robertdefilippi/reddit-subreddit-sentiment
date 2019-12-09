@@ -243,11 +243,11 @@ def submit_login():
 
         password_hash_str = "None" if password_hash is None else password_hash
 
-        app.logger.log(f"Password hash: {password_hash_str}")
+        app.logger.info(f"Password hash: {password_hash_str}")
 
         verify_user = check_password_hash(password_hash_str, from_password)
 
-        app.logger.log(f"Verify user: {verify_user}")
+        app.logger.info(f"Verify user: {verify_user}")
 
         # Check if user password is correct
         if verify_user:
